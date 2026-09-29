@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#123f3a" />
+    <title>BLAGO CRM</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="auth-view" class="auth-shell">
+      <section class="auth-card">
+        <div class="brand"><span class="brand-mark">B</span><span>BLAGO CRM</span></div>
+        <h1>Звонки без хаоса</h1>
+        <p>Компании, результаты звонков и перезвоны на одном экране.</p>
+        <form id="auth-form">
+          <label>Email<input id="email" type="email" autocomplete="email" required /></label>
+          <label>Пароль<input id="password" type="password" autocomplete="current-password" minlength="6" required /></label>
+          <button id="auth-submit" class="primary" type="submit">Войти</button>
+        </form>
+        <button id="signup-button" class="text-button">Первый вход — создать аккаунт</button>
+        <p id="auth-message" class="message"></p>
+      </section>
+    </main>
+
+    <main id="app-view" hidden>
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark">B</span><span>BLAGO CRM</span></div>
+        <div class="header-actions"><button id="new-company" class="primary">+ Компания</button><button id="signout" class="quiet">Выйти</button></div>
+      </header>
+      <section class="workspace">
+        <div class="page-heading"><div><p class="eyebrow">РАБОЧИЙ ЭКРАН</p><h1>Сегодня</h1><p id="today-label" class="muted"></p></div><div class="stat"><strong id="today-count">0</strong><span>задач</span></div></div>
+        <nav class="filters" aria-label="Фильтр задач"><button class="filter active" data-filter="today">Сегодня</button><button class="filter" data-filter="overdue">Просрочено</button><button class="filter" data-filter="all">Все компании</button></nav>
+        <section id="task-list" class="task-list"></section>
+        <section id="empty-state" class="empty-state" hidden><h2>На сегодня задач нет</h2><p>Добавь компанию и назначь первый звонок.</p><button class="primary" id="empty-add">Добавить компанию</button></section>
+      </section>
+    </main>
+
+    <dialog id="company-dialog" class="dialog"><form id="company-form" method="dialog"><div class="dialog-head"><h2 id="dialog-title">Новая компания</h2><button class="icon-button" value="cancel" aria-label="Закрыть">×</button></div><input id="company-id" type="hidden" /><div class="form-grid"><label>Компания<input id="company-name" required placeholder="Название фирмы" /></label><label>Контакт<input id="contact-name" placeholder="Имя / должность" /></label><label>Телефон<input id="phone" inputmode="tel" placeholder="050…" /></label><label>Язык<select id="language"><option value="EN">EN</option><option value="HE">HE</option><option value="RU">RU</option></select></label><label class="full">Следующее действие<input id="next-action" type="datetime-local" /></label><label class="full">Заметки<textarea id="notes" rows="3" placeholder="Что важно знать до звонка"></textarea></label></div><div class="dialog-actions"><button id="delete-company" class="danger" type="button" hidden>Удалить</button><span></span><button value="cancel" class="quiet" type="button" id="cancel-dialog">Отмена</button><button class="primary" value="default" type="submit">Сохранить</button></div></form></dialog>
+    <dialog id="outcome-dialog" class="dialog"><form id="outcome-form" method="dialog"><div class="dialog-head"><h2 id="outcome-company"></h2><button class="icon-button" value="cancel" aria-label="Закрыть">×</button></div><p class="muted">Как прошёл звонок?</p><div id="outcome-options" class="outcomes"></div><label>Свой результат / заметка<textarea id="outcome-note" rows="3" placeholder="Например: говорить с манкалем после праздника"></textarea></label><label>Следующее действие<input id="outcome-next" type="datetime-local" /></label><div class="dialog-actions"><button value="cancel" class="quiet" type="button" id="cancel-outcome">Отмена</button><button class="primary" value="default" type="submit">Сохранить результат</button></div></form></dialog>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
