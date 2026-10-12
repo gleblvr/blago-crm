@@ -25,4 +25,7 @@ $('delete-company').onclick=async()=>{if(!confirm('Удалить компани
 $('outcome-form').onsubmit=async(e)=>{e.preventDefault();const id=$('outcome-dialog').dataset.companyId;const next=$('outcome-next').value?new Date($('outcome-next').value).toISOString():null;const note=$('outcome-note').value.trim()||null;const {error}=await crmClient.from('call_logs').insert({company_id:id,outcome:selectedOutcome,note,next_action_at:next});if(error){alert(error.message);return;}const upd=await crmClient.from('companies').update({status:selectedOutcome,custom_status:selectedOutcome==='custom'?note:null,last_contacted_at:new Date().toISOString(),next_action_at:next,updated_at:new Date().toISOString()}).eq('id',id);if(upd.error){alert(upd.error.message);return;}$('outcome-dialog').close();await loadCompanies();};
 document.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));render();});
 document.addEventListener('click',e=>{const c=e.target.closest('.call');if(c?.tagName==='BUTTON'){const card=e.target.closest('.task-card');const company=companies.find(x=>x.id===card.querySelector('[data-edit]')?.dataset.edit);if(company)setTimeout(()=>openOutcome(company),250);}});
-crmClient.auth.getSession().then(({data:{session}})=>{if(session)showApp();});
+function showAuth(){ $('app-view').hidden=true;$('auth-view').hidden=false; }
+crmClient.auth.onAuthStateChange((_event,session)=>{if(session)showApp();else showAuth();});
+crmClient.auth.getSession().then(({data:{session}})=>{if(session)showApp();else showAuth();});
+
