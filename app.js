@@ -41,7 +41,7 @@ function advertisingWhatsappUrl(company) {
   if (!/^\d{8,15}$/.test(number)) return null;
   return 'https://wa.me/' + number + '?text=' + encodeURIComponent(ADV_WHATSAPP_TEXT);
 }
-OUTCOMES.adv_whatsapp = 'Send adv WhatsApp';
+OUTCOMES.adv_whatsapp = 'Info ->WA';
 const renderBeforeAdvertising = render;
 render = () => {
   renderBeforeAdvertising();
@@ -53,7 +53,7 @@ render = () => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'wa';
-    button.textContent = 'Send adv WhatsApp';
+    button.textContent = 'Info ->WA';
     button.disabled = !url;
     if (!url) button.title = 'Укажите телефон компании';
     button.addEventListener('click', () => {
