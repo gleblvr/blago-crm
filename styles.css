@@ -2,3 +2,14 @@
 /* Keep the sign-in screen hidden after an authenticated session is restored. */
 #auth-view[hidden]{display:none!important}
 #app-view[hidden]{display:none!important}
+
+/* Keep all company actions visible on narrow phone screens. */
+.task-card .card-actions{min-width:0;flex-wrap:wrap;align-items:stretch}
+.task-card .card-actions>a{display:flex;min-width:0;text-decoration:none}
+.task-card .card-actions>a>button{width:100%}
+.task-card .card-actions>button{min-width:0}
+@media(max-width:560px){
+ .task-card .card-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%}
+ .task-card .card-actions>a,.task-card .card-actions>button{width:100%;min-width:0}
+ .task-card .card-actions button{font-size:.88rem;padding:11px 5px;white-space:normal;overflow-wrap:anywhere}
+}
