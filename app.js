@@ -31,3 +31,34 @@ crmClient.auth.getSession().then(({data:{session}})=>{if(session)showApp();else 
 
 const STATUS={new:'Не связывался',not_relevant:'Не актуально',warming:'Прогрев',working:'В работе'};let statusFilter='all';function whatsappUrl(phone){let n=(phone||'').replace(/\D/g,'');if(/^0\d{8,9}$/.test(n))n='972'+n.slice(1);return 'https://wa.me/'+n;}function lastNote(n=''){return n.replace(/^\*экспорт\*\s*/,'').trim().split(/\n\s*\n/)[0].replace(/^\d{2}\.\d{2}\.\d{2} \d{2}:\d{2}\s*/,'').trim();}const oldFiltered=filtered;filtered=()=>oldFiltered().filter(c=>statusFilter==='all'||(c.status||'new')===statusFilter);const oldRender=render;render=()=>{oldRender();document.querySelectorAll('.task-card').forEach((el,i)=>{const c=filtered()[i];if(!c)return;el.classList.add('status-'+(c.status||'new'));const meta=el.querySelector('.meta');meta.insertAdjacentHTML('beforeend','<span class="status-label">'+STATUS[c.status||'new']+'</span>');if(c.contact_name&&lastNote(c.notes))meta.insertAdjacentHTML('beforeend','<span class="last-note">'+escapeHtml(lastNote(c.notes))+'</span>');});};const oldOpen=openCompany;openCompany=c=>{oldOpen(c);$('company-status').value=c?.status||'new';};const sf=document.createElement('select');sf.id='status-filter';sf.innerHTML='<option value="all">Все статусы</option><option value="new">Не связывался</option><option value="not_relevant">Не актуально</option><option value="warming">Прогрев</option><option value="working">В работе</option>';document.querySelector('.filters').after(sf);const cs=document.createElement('label');cs.className='full';cs.innerHTML='Статус<select id="company-status"><option value="new">Не связывался</option><option value="not_relevant">Не актуально</option><option value="warming">Прогрев</option><option value="working">В работе</option></select>';document.querySelector('.form-grid').append(cs);document.head.insertAdjacentHTML('beforeend','<style>.task-card.status-not_relevant{background:#f8e6e5}.task-card.status-warming{background:#faf5dc}.task-card.status-working{background:#e6f3e8}.status-label{font-weight:700}.last-note{width:100%;font-size:.84rem;color:#42514d}</style>');$('company-form').addEventListener('submit',async()=>{const id=$('company-id').value;if(id)await crmClient.from('companies').update({status:$('company-status').value,updated_at:new Date().toISOString()}).eq('id',id);});sf.onchange=e=>{statusFilter=e.target.value;render();};
 const baseLoad=loadCompanies;loadCompanies=async()=>{const prior=new Map(companies.map((c,i)=>[c.id,i]));const {data,error}=await crmClient.from('companies').select('*');if(error){alert(error.message);return;}companies=(data||[]).sort((a,b)=>(prior.get(a.id)??1e9)-(prior.get(b.id)??1e9));render();};const statusRender=render;render=()=>{statusRender();document.querySelectorAll('.status-label').forEach(x=>x.remove());document.querySelectorAll('.task-card').forEach((el,i)=>{const c=filtered()[i];if(c&&lastNote(c.notes)&&!el.querySelector('.last-note'))el.querySelector('.meta').insertAdjacentHTML('beforeend','<span class="last-note">'+escapeHtml(lastNote(c.notes))+'</span>');});};
+
+/* Pre-filled WhatsApp advertising message (user sends manually). */
+const ADV_WHATSAPP_TEXT = 'היי. דיברנו עכשיו. הנה האתר שלי עם דירות. כשיהיו לך פרויקטים, בהחלט נוכל לעזור אחד לשני. בהצלחה! https://tinyurl.com/BLAGO-HOME';
+function advertisingWhatsappUrl(company) {
+  const raw = company.contact_phone || company.whatsapp || company.phone || '';
+  let number = raw.replace(/\D/g, '');
+  if (/^0\d{9}$/.test(number)) number = '972' + number.slice(1);
+  if (!/^\d{8,15}$/.test(number)) return null;
+  return 'https://wa.me/' + number + '?text=' + encodeURIComponent(ADV_WHATSAPP_TEXT);
+}
+OUTCOMES.adv_whatsapp = 'Send adv WhatsApp';
+const renderBeforeAdvertising = render;
+render = () => {
+  renderBeforeAdvertising();
+  document.querySelectorAll('.task-card').forEach((card, index) => {
+    const company = filtered()[index];
+    if (!company) return;
+    const actions = card.querySelector('.card-actions');
+    const url = advertisingWhatsappUrl(company);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'wa';
+    button.textContent = 'Send adv WhatsApp';
+    button.disabled = !url;
+    if (!url) button.title = 'Укажите телефон компании';
+    button.addEventListener('click', () => {
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    });
+    actions.insertBefore(button, actions.querySelector('[data-edit]'));
+  });
+};
