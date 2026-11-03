@@ -13,3 +13,8 @@
  .task-card .card-actions>a,.task-card .card-actions>button{width:100%;min-width:0}
  .task-card .card-actions button{font-size:.88rem;padding:11px 5px;white-space:normal;overflow-wrap:anywhere}
 }
+
+/* Align the dial link exactly like the other action buttons. */
+.task-card .card-actions>a.call{display:flex;align-items:center;justify-content:center;text-align:center;font:inherit;font-weight:600;line-height:1.2;padding:11px 12px;box-sizing:border-box;white-space:normal}
+.task-card .card-actions>button.call:disabled{opacity:.45;cursor:not-allowed;background:#d5d9d8;color:#646b6b}
+@media(max-width:560px){.task-card .card-actions>a.call{font-size:.88rem;padding:11px 5px}}
